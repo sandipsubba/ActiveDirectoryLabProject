@@ -29,9 +29,9 @@ This lab project uses Windows Server 2022 as the Domain Controller and Windows 1
 
 This lab uses the Windows Server Desktop Experience (GUI) to replicate a real-world enterprise Active Directory management environment and provide clear visual confirmation of configurations.
 
-<b>Steps that were immediately taken after the setup process:</b>
-- <b>VirtualBox Guest Additions:</b> Installed on both virtual machines immediately following deployment. This step improves mouse pointer integration, display scaling, and VM responsiveness.
+<b>Steps taken during and immediately after the setup process:</b>
 - <b>Credential Standardization:</b> For the scope of this lab, a single complex password was used across both the domain controller and client machine to simplify deployment while still meeting the default Windows Server password complexity requirements.
+- <b>VirtualBox Guest Additions:</b> Installed on both virtual machines immediately following deployment. This step improves mouse pointer integration, display scaling, and VM responsiveness.
 <br/>
 <br />
 <h2></h2>
@@ -50,24 +50,69 @@ Before configuring roles or promoting the server, the computer name was changed 
 <br />
 <br />
 <br />
-Enter the number of passes: <br/>
-<img src="https://i.imgur.com/nCIbXbg.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
+<h2></h2>
+<b>Active Directory Domain Services (AD DS) Installation</b>
+
+The next step was installing AD DS. This step installs the core software files for the server to be promoted to a Domain Controller.
+- <b>Active Directory Domain Services:</b> This service establishes a centralized infrastructure for user authentication, network resource management, and secure domain access.
+- <b>Group Policy Management:</b> This enables centralized management of configurations, allowing administrators to push security baselines, software updates, and restrictions to domain-joined assets.
+- <b>Remote Server Administration Tools (RSAT):</b> Installs the suite of local GUI and powershell tools that allow the IT Administrator to manage server roles and services remotely.
+
+The last step was to promote the server to a Domain Controller by selecting "Add a new forest" and naming the root domain mydomain.org.
+<img width="1024" height="768" alt="AD installation" src="https://github.com/user-attachments/assets/61587d6d-14a8-4a0a-9bed-116e5aa84ca4" />
+<b>Administrative Account Separation:</b> Following the initial domain setup, enterprise best practice dictates that configuring and installing other Active Directory services should be done with an actual Administrative account rather than a default built-in Windows Administrator profile. To implement this, Active Directory Users and Computers or ADUC was used to create a new Organizational Unit (OU) named Admins. A new user account was then created inside this OU and directly added to the Domain Admins group.
+
 <br />
 <br />
-Confirm your selection:  <br/>
-<img src="https://i.imgur.com/cdFHBiU.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
+<h2></h2>
+<b>Routing and Remote Access (RAS/NAT)</b>
+
+Following the login to the new Administrative account, the next phase was deploying the Routing and Remote Access Service (RRAS). Configuring RRAS with Network Address Translation (NAT) allows internal client virtual machines to securely access the internet through the Domain Controller's external network interface. This way, the DC acts like a gateway for the client machines while isolating them from the physical home network.
+<img width="1024" height="767" alt="routing and remote" src="https://github.com/user-attachments/assets/52bef14d-35a8-4dd4-b51a-0e7342d6f5dc" />
+
 <br />
 <br />
-Wait for process to complete (may take some time):  <br/>
-<img src="https://i.imgur.com/JL945Ga.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
+<h2></h2>
+<b>DHCP Server Installation</b>
+
+This phase deploys the DHCP Server role, which automates network configuration for the internal virtual machine clients. This enables the internal clients to automatically receive a valid IP address, subnet mask, default gateway, and the correct DNS settings.
+<img width="1024" height="767" alt="DHCP" src="https://github.com/user-attachments/assets/1b3429e7-d5e6-4c14-9deb-dc01a8b10a16" />
+
 <br />
 <br />
-Sanitization complete:  <br/>
-<img src="https://i.imgur.com/K71yaM2.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
+<h2></h2>
+<b>DHCP Scope</b>
+
+To complete the deployment of the DHCP server role, a new DHCP scope was configured within the 172.16.0.0/24 subnet, establishing an address pool from 172.16.0.100 to .200. Within the scope options, the default gateway was set to 172.16.0.1, ensuring all internal clients automatically route through the DC's NAT gateway to access external networks. 
+<img width="1024" height="767" alt="DHCPFinal" src="https://github.com/user-attachments/assets/e7e2729e-f457-4a04-801f-9d179c610671" />
+
 <br />
 <br />
-Observe the wiped disk:  <br/>
-<img src="https://i.imgur.com/AeZkvFQ.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
+<h2></h2>
+<b>Generate Unique Names</b>
+
+Instead of downloading a generic list of names from the internet, I created a custom PowerShell script that was built to create a completely randomized list of 500 unique names. The script pulls from arrays of first and last names, dynamically checks each combination against a tracking list to ensure the name is unique, and skips duplicates. Once 500 unique names are successfully generated, they are exported to a text file (names.txt), which will be used as the data input for the next script.
+<img width="1024" height="767" alt="realtxt" src="https://github.com/user-attachments/assets/6ff4d43e-ae0d-4084-a877-b2edb631bbc3" />
+<br />
+<br />
+<br />
+<h2></h2>
+<b>Bulk Active Directory Provisioning</b>
+
+With the raw data generated, I created a second custom PowerShell script that was built to parse names.txt and automatically create the accounts. The script reads each line, splits the full name into individual first and last name strings, and dynamically constructs standardized firstname.lastname usernames. Using a parameter splatting hashtable (@UserParams), the script maps out the unique user attributes-including secure passwords and different Employee IDs-before executing New-ADUser to rapidly create all 500 records directly to an organization unit named "_EMPLOYEES".
+<img width="1024" height="767" alt="realcreate" src="https://github.com/user-attachments/assets/7044ac29-1236-4c22-a19e-04a9211e3c3b" />
+<br />
+<br />
+<br />
+<h2></h2>
+
+
+<img width="1024" height="768" alt="joineddomains" src="https://github.com/user-attachments/assets/239bbc1f-6e66-4446-95d1-206591ab938e" />
+<br />
+<br />
+
+<img width="1024" height="768" alt="ping" src="https://github.com/user-attachments/assets/d74e10f7-38d6-4e62-b764-fad5f9c274d2" />
+
 </p>
 
 <!--
