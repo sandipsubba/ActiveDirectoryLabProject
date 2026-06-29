@@ -45,5 +45,3 @@ foreach ($Name in $UserList) {
 
     $count++
 }
-
-[commit changes]
