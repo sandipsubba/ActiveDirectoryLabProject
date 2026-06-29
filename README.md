@@ -1,17 +1,20 @@
 <h1>Active Directory Project</h1>
 
 <h2>Description</h2>
-Project consists of a simple PowerShell script that walks the user through "zeroing out" (wiping) any drives that are connected to the system. The utility allows you to select the target disk and choose the number of passes that are performed. The PowerShell script will configure a diskpart script file based on the user's selections and then launch Diskpart to perform the disk sanitization.
-<img width="651" height="701" alt="grand drawio" src="https://github.com/user-attachments/assets/b198db06-1fd2-4364-85cd-e20f078a4244" />
+This project demonstrates the deployment, configuration, and automation of an enterprise grade Active Directory infrastructure within a fully isolated virtual environment. Utilizing Windows Server 2022 and Windows 11, the lab features a fully operational Domain Controller managing network routing via RAS/NAT, automated IP addressing through custom DHCP scopes, and centralized identity management. To optimize administrative workflows, custom PowerShell scripts were engineered to automate bulk user creation and provide real-time, interactive account auditing and incident remediation.
 
+<br />
+<br />
+<img width="651" height="701" alt="FinalDia drawio" src="https://github.com/user-attachments/assets/69aafc25-3408-4523-8e02-39a64da012aa" />
 
+<br />
 <br />
 
 
 <h2>Languages and Utilities Used</h2>
 
 - <b>PowerShell</b> 
-- <b>Diskpart</b>
+- <b>Active Directory Module</b>
 
 <h2>Environments Used </h2>
 
@@ -143,9 +146,23 @@ Following the successful domain integration and a system restart, authentication
 <h2></h2>
 <b>Group Policy Enforcement and Security Baseline Verification</b>
 
-A security baseline configuration was executed using the Group Policy Management Console (GPMC). To deliver these security thresholds to the client machine, a forced policy update was initiated. Utilizing the Command Prompt on the target machine, the `gpresult /r` utility was used to audit the configuration. As shown in the picture, the resulting output verifies that the account lockout policies and administrative restrictions are actively binding directory objects within the "_HR" Organizational Unit.
+A security baseline configuration was executed using the Group Policy Management Console (GPMC). To deliver these security thresholds to the client machine, a forced policy update was initiated. Utilizing the Command Prompt on the target machine, the `gpresult /r` utility was used to audit the configuration. As shown in the picture, the resulting output verifies that the "Sec_User_Baseline" Group Policy Object is actively applied to the user account within "_HR" Organizational Unit, successfully enforcing the baseline security settings configuration.
 
 <img width="1024" height="768" alt="finalbaseline" src="https://github.com/user-attachments/assets/78661b73-1cd2-4d74-97bc-d04983b5cf9b" />
+<br />
+<br />
+<br />
+<h2></h2>
+<b>Active Directory Security Baseline & Automated Incident Response Lab</b>
+
+To test the interactive utility script under realistic constraints, the domain's Account Lockout Policy baseline was temporarily tightened to enforce a strict lockout threshold of 2 invalid logon attempts.
+- <b>State Detection:</b> The user account "andrew.perez" was intentionally locked out via a Windows 11 workstation (shown on the right virtual machine). The remediation script executed on the Domain Controller (shown on the left virtual machine) dynamically queried Active Directory, flagging the boolean state with an automated Red alert (Locked Out: True).
+- <b>Remediation and Compliance:</b> Option "1" was selected to instantly clear up the account's lockout status in Active Directory, updating the terminal status to a compliant Green (Locked Out: False). Subsequently, option 2 was initiated to reset the account's credential to a temporary default (Password0).
+- <b>Security Enforcement:</b> Because the script natively utilizes the `-ChangePasswordAtLogon $true` parameter within the `Set-ADUser` cmdlet, it enforces strict credential hygiene. Clicking "OK" on the client workstation instantly triggered a mandatory corporate password change dialog before allowing network authentication.
+
+<img width="2560" height="1440" alt="Screenshot 2026-06-28 193631" src="https://github.com/user-attachments/assets/668a9d37-cecf-4cc7-9fda-cf4a8e2c5745" />
+
+<img width="2560" height="1440" alt="Screenshot 2026-06-28 193748" src="https://github.com/user-attachments/assets/ec6f79c1-518a-43a3-bead-b1ace455ac00" />
 
 </p>
 
