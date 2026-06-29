@@ -1,7 +1,7 @@
 <h1>Active Directory Project</h1>
 
 <h2>Description</h2>
-This project demonstrates the deployment, configuration, and automation of an enterprise grade Active Directory infrastructure within a fully isolated virtual environment. Utilizing Windows Server 2022 and Windows 11, the lab features a fully operational Domain Controller managing network routing via RAS/NAT, automated IP addressing through custom DHCP scopes, and centralized identity management. To optimize administrative workflows, custom PowerShell scripts were engineered to automate bulk user creation and provide real-time, interactive account auditing and incident remediation.
+This project demonstrates the deployment, configuration, and automation of an enterprise-modeled Active Directory infrastructure within a fully isolated virtual environment. Utilizing Windows Server 2022 and Windows 11, the lab features a fully operational Domain Controller managing network routing via RAS/NAT, automated IP addressing through custom DHCP scopes, and centralized identity management. To optimize administrative workflows, custom PowerShell scripts were engineered to automate bulk user creation and provide real-time, interactive account auditing and incident remediation.
 
 <br />
 <br />
