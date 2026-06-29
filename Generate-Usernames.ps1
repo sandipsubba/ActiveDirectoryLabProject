@@ -46,5 +46,3 @@ $OutputPath = "$PSScriptRoot\names.txt"
 $GeneratedNames | Out-File -FilePath $OutputPath -Encoding utf8
 
 Write-Host "Successfully generated 500 unique names at: $OutputPath" -ForegroundColor Green
-
-[commit changes]
