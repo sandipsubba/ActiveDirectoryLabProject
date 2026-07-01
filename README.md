@@ -100,7 +100,7 @@ To complete the deployment of the DHCP server role, a new DHCP scope was configu
 <h2></h2>
 <b>Generate Unique Names</b>
 
-Instead of downloading a generic list of names from the internet, I created a custom PowerShell script that was built to generate a completely randomized list of 500 unique names. The script pulls from arrays of first and last names, dynamically checks each combination against a tracking list to ensure the name is unique, and skips duplicates. Once 500 unique names are successfully generated, they are exported to a text file "names.txt", which will be used as the data input for the next script.
+Instead of downloading a generic list of names from the internet, I created a custom PowerShell script to generate a completely randomized list of 500 unique names. The script pulls from arrays of first and last names, dynamically checks each combination against a high-efficiency hashtable to ensure uniqueness, and skips duplicates. Once 500 unique names are successfully generated, they are exported to a text file "names.txt", which will serve as the data input for the bulk provision script.
 
 <img width="1024" height="767" alt="realtxt" src="https://github.com/user-attachments/assets/6ff4d43e-ae0d-4084-a877-b2edb631bbc3" />
 <br />
