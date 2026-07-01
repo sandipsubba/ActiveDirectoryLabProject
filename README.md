@@ -41,7 +41,7 @@ This lab uses the Windows Server Desktop Experience (GUI) to replicate a real-wo
 <h2></h2>
 <b>Network Interface & DNS Settings</b>
 
-The Domain Controller was configured with a static IPv4 address on the internal network. The default gateway was left blank because this interface is used only for internal communication within the virtual lab, while routing is handled through the NAT adapter.
+The Domain Controller was configured with a static IPv4 address on the internal network. The default gateway was left blank because it will cause a conflict inside the Domain Controller, and the DC itself will be providing the default gateway through NAT.
 
 <b>DNS Loopback Integration</b>
 
@@ -61,7 +61,7 @@ Before configuring roles or promoting the server, the computer name was changed 
 The next step was installing AD DS. This step installs the core software files for the server to be promoted to a Domain Controller.
 - <b>Active Directory Domain Services:</b> This service establishes a centralized infrastructure for user authentication, network resource management, and secure domain access.
 - <b>Group Policy Management:</b> This enables centralized management of configurations, allowing administrators to push security baselines, software updates, and restrictions to domain-joined assets.
-- <b>Remote Server Administration Tools (RSAT):</b> Installs the suite of local GUI and powershell tools that allow the IT Administrator to manage server roles and services remotely.
+- <b>Remote Server Administration Tools (RSAT):</b> Installs the suite of local GUI and PowerShell tools that allows the IT Administrator to manage server roles and services remotely.
 
 The last step was to promote the server to a Domain Controller by selecting "Add a new forest" and naming the root domain mydomain.org.
 
@@ -73,7 +73,7 @@ The last step was to promote the server to a Domain Controller by selecting "Add
 <h2></h2>
 <b>Routing and Remote Access (RAS/NAT)</b>
 
-Following the login to the new Administrative account, the next phase was deploying the Routing and Remote Access Service (RRAS). Configuring RRAS with Network Address Translation (NAT) allows internal client virtual machines to securely access the internet through the host server's external network interface. This configuration ensures the server acts as a gateway for the client machines while isolating them from the physical home network.
+Following the login to the new Administrator account, the next phase was deploying the Routing and Remote Access Service (RRAS). Configuring RRAS with Network Address Translation (NAT) allows internal client virtual machines to securely access the internet through the host server's external network interface. This configuration ensures the server acts as a gateway for the client machines while isolating them from the physical home network.
 
 <img width="1024" height="767" alt="routing and remote" src="https://github.com/user-attachments/assets/52bef14d-35a8-4dd4-b51a-0e7342d6f5dc" />
 
@@ -118,7 +118,7 @@ With the raw data generated, I created a second custom PowerShell script that wa
 <h2></h2>
 <b>Infrastructure and Network Connectivity Validation</b>
 
-Directly following the execution of the bulk script, the Windows 11 client machine was booted and accessed via the local user account to perform a pre-join audit. Using the Command Prompt, an `ipconfig` analysis verified proper IP network addressing within the isolated lab environment. The Following connectivity tests were performed using the ping utility: an internal ping successfully validated DNS resolution and low-latency traversal to the Active Directory Domain Controller (mydomain.org), while an outbound request was executed through an external network (google.com), confirming functional NAT routing and gateway access.
+Directly following the execution of the bulk script, the Windows 11 client machine was booted and accessed via the local user account to perform a pre-join audit. Using the Command Prompt, an `ipconfig` analysis verified proper IP network addressing within the isolated lab environment. The following connectivity tests were performed using the ping utility: an internal ping successfully validated DNS resolution and low-latency traversal to the Active Directory Domain Controller (mydomain.org), while an outbound request was executed to an external network (google.com), confirming functional NAT routing and gateway access.
 
 <img width="1024" height="768" alt="realping" src="https://github.com/user-attachments/assets/0fcf728c-16f4-4712-9254-5a3ed35771fc" />
 
@@ -128,7 +128,7 @@ Directly following the execution of the bulk script, the Windows 11 client machi
 <h2></h2>
 <b>Active Directory Domain Integration</b>
 
-With the validation of network connectivity and DNS resolution, the Windows 11 Pro machine (client1) was successfully joined to the "mydomain.org" Active Directory domain using privileged credentials. This establishes secure communication between the client and the primary Domain Controller, finalizing this workstation's transition into the enterprise directory infrastructure.
+With the validation of network connectivity and DNS resolution, the Windows 11 Pro machine (client1) was successfully joined to the "mydomain.org" Active Directory domain using privileged credentials. This establishes secure communication between the client and the Domain Controller, finalizing this workstation's transition into the enterprise directory infrastructure.
 
 <img width="1024" height="768" alt="realjoin" src="https://github.com/user-attachments/assets/52c296db-f309-49d0-91b2-59f43d93389d" />
 <br />
@@ -137,7 +137,7 @@ With the validation of network connectivity and DNS resolution, the Windows 11 P
 <h2></h2>
 <b>User Authentication and Domain Session Verification</b>
 
-Following the successful domain integration and a system restart, authentication was verified by logging into the workstation using the domain account "andrew.jones", which was provisioned during the bulk script. The Command Prompt was utilized to run the `whoami` utility, confirming an active domain session context ("mydomain\andrew.jones"). This test validates the workstation securely works with the Active Directory Domain Controller and that script-created directory objects are fully operational for enterprise network access.
+Following the successful domain integration and a system restart, authentication was verified by logging into the workstation using the domain account "andrew.jones", which was provisioned during the bulk script. The Command Prompt was utilized to run the `whoami` utility, confirming an active domain session context ("mydomain\andrew.jones"). This test validates that the workstation securely communicates with the Active Directory Domain Controller and that script-created directory objects are fully operational for enterprise network access.
 
 <img width="1024" height="768" alt="whoami" src="https://github.com/user-attachments/assets/3e8aff1d-61e3-4f84-bd3c-fdd8864a72ff" />
 <br />
@@ -157,7 +157,7 @@ A security baseline configuration was executed using the Group Policy Management
 
 To test the interactive utility script under realistic constraints, the domain's Account Lockout Policy baseline was temporarily tightened to enforce a strict lockout threshold of 2 invalid logon attempts.
 - <b>State Detection:</b> The user account "andrew.perez" was intentionally locked out via a Windows 11 workstation (shown on the right virtual machine). The remediation script executed on the Domain Controller (shown on the left virtual machine) dynamically queried Active Directory, flagging the boolean state with an automated Red alert (Locked Out: True).
-- <b>Remediation and Compliance:</b> Option "1" was selected to instantly clear up the account's lockout status in Active Directory, updating the terminal status to a compliant Green (Locked Out: False). Subsequently, option 2 was initiated to reset the account's credential to a temporary default (Password0).
+- <b>Remediation and Compliance:</b> Option "1" was selected to instantly unlock the account's lockout status in Active Directory, updating the terminal status to a compliant Green (Locked Out: False). Subsequently, option 2 was initiated to reset the account's credential to a temporary default (Password0).
 - <b>Security Enforcement:</b> Because the script natively utilizes the `-ChangePasswordAtLogon $true` parameter within the `Set-ADUser` cmdlet, it enforces strict credential hygiene. Clicking "OK" on the client workstation instantly triggered a mandatory corporate password change dialog before allowing network authentication.
 
 <img width="2560" height="1440" alt="Screenshot 2026-06-28 193631" src="https://github.com/user-attachments/assets/668a9d37-cecf-4cc7-9fda-cf4a8e2c5745" />
