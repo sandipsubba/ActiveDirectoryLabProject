@@ -147,6 +147,7 @@ Following the domain join and a system restart, to verify that the domain was su
 <b>Group Policy Enforcement and Security Baseline Verification</b>
 
 I created a security baseline configuration using the Group Policy Management Console (GPMC). To deliver these security thresholds to the client machine, I ran a forced policy update. Using the Command Prompt on the target machine, I ran the `gpresult /r` utility to audit the configuration. As shown in the picture, the result verifies that the "Sec_User_Baseline" Group Policy Object is actively applied to the user account within the "_HR" Organizational Unit, successfully enforcing the baseline security settings.
+
 <img width="1024" height="768" alt="finalbaseline" src="https://github.com/user-attachments/assets/78661b73-1cd2-4d74-97bc-d04983b5cf9b" />
 <br />
 <br />
