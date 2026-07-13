@@ -109,7 +109,7 @@ Instead of downloading a generic list of names from the internet, I created a cu
 <h2></h2>
 <b>Bulk Active Directory Provisioning</b>
 
-With the raw data generated, I created a second custom PowerShell script to parse "names.txt" and automatically create the accounts. The script reads each line, splits the full name into individual first and last name strings, and dynamically constructs standardized `firstname.lastname` usernames. Using a parameter splatting hashtable "@UserParams", the script maps out the unique user attributes-including secure passwords and different Employee IDs-before executing `New-ADUser` to rapidly create all 500 records directly to an organizational unit named "_EMPLOYEES".
+With the raw data generated, I created a second custom PowerShell script to parse "names.txt" and automatically create the accounts. The script reads each line, splits the full name into individual first and last name strings, and dynamically constructs standardized `firstname.lastname` usernames. Using a parameter splatting hashtable "@UserParams", the script maps out the unique user attributes-including a standardized initial password and different Employee IDs-before executing `New-ADUser` to rapidly create all 500 records directly to an organizational unit named "_EMPLOYEES".
 
 <img width="1024" height="767" alt="realcreate" src="https://github.com/user-attachments/assets/7044ac29-1236-4c22-a19e-04a9211e3c3b" />
 <br />
