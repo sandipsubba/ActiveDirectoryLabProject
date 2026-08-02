@@ -4,7 +4,7 @@
     Queries Active Directory for a user’s account status  (Enabled, Lockout, Last Logon, Password Set) and provides an interactive menu to unlock the account or reset the password.
     .PARAMETER USERNAME 
     The SamAccountName (Username) of the target Active Directory user account.
-    .OUTPUT 
+    .OUTPUTS 
     Displays account status and messages on the console in real-time.
 #>
 
